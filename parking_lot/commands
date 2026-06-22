@@ -1,0 +1,12 @@
+cpl PR0000 2 2
+park_vehicle MP-09-AB-0000 white
+park_vehicle MP-09-AB-1111 black
+park_vehicle MP-09-AB-2222 black
+park_vehicle MP-09-AB-3333 red
+park_vehicle MP-09-AB-4444 white
+display color white
+display color black
+status
+unpark_vehicle TKT-1234
+
+unpark_vehicle TKT-F0-S1-1782120120

@@ -22,19 +22,24 @@ class CommandProcessor
       plate: 'vehicle_with_plate'
     }
 
-    case command
-    when 'cpl' # cpl means create_parking_lot
-      create_floors_and_spots(*args)
-    when 'park_vehicle'
-      @lot.park(*args)
-    when 'unpark_vehicle'
-      @lot.unpark(*args)
-    when 'display'
-      @lot.public_send(display[args[0].to_sym], args[1])
-    when 'status'
-      @lot.status
-    else
-      raise InvalidCommandError, 'Command not found'
+    begin
+      case command
+      when 'cpl' # cpl means create_parking_lot
+        create_floors_and_spots(*args)
+      when 'park_vehicle'
+        @lot.park(*args)
+      when 'unpark_vehicle'
+        @lot.unpark(*args)
+      when 'display'
+        @lot.public_send(display[args[0].to_sym], args[1])
+      when 'status'
+        @lot.status
+      else
+        raise InvalidCommandError, 'Command not found'
+      end
+    rescue ArgumentError, ParkingLot::SpotNotAvailableError, ParkingLot::VehicleNotFoundError,
+           LotIdAlreadyConfigureError, CommandProcessor::InvalidCommandError => e
+      puts e.message
     end
   end
 

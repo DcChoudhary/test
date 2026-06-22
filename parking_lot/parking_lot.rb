@@ -4,6 +4,7 @@ require 'singleton'
 require_relative 'floor'
 require_relative 'spot'
 require_relative 'vehicle'
+require_relative 'ticket'
 
 ##
 # This class is reposnsible to handle all the operations for the parking lot
@@ -22,14 +23,13 @@ class ParkingLot
 
   def initialize
     @floors = []
+    @tickets = {}
     @lot_id = nil
   end
 
   def configure(lot_id)
-    if @lot_id
-      puts 'Lot id is already configured'
-      return
-    end
+    raise LotIdAlreadyConfigureError, 'Lot id is already configured' if @lot_id
+
     @lot_id = lot_id
   end
 
@@ -39,26 +39,29 @@ class ParkingLot
   end
 
   def park(vehicle_plate, color)
-    vehicle_already_parked!
+    _, spot = find_spot_by_plate(vehicle_plate)
+    raise ArgumentError, "Vehicle with #{vehicle_plate} already parked!" if spot
 
     spot = find_free_spot
     raise SpotNotAvailableError, 'Parking lot is full' unless spot
 
-    spot.park!(Vehicle.new(vehicle_plate, color))
-    puts "Vehicle #{spot.vehicle.plate} is parked at #{spot.spot_id}"
+    vehicle = Vehicle.new(vehicle_plate, color)
+    ticket = Ticket.new(vehicle, spot, Time.now)
+    @tickets[ticket.id] = ticket
+    spot.park!(vehicle)
+    puts "Vehicle #{vehicle.plate} is parked at #{spot.spot_id} with ticket number #{ticket.id}"
   end
 
-  def unpark(vehicle_plate)
-    _, spot = find_spot_by_plate(vehicle_plate)
-    unless spot
+  def unpark(ticket_id)
+    ticket = @tickets[ticket_id]
+    unless ticket
       raise VehicleNotFoundError,
-            "No Vehicle parked with vehicle plate #{vehicle_plate}"
+            "No Vehicle parked with ticket id #{ticket_id}"
     end
 
-    vehicle = spot.vehicle
-    spot.vacate!
-    puts "Unpark a vehicle with vehicle plate #{vehicle_plate}, and color #{vehicle.color}"
-    vehicle
+    vehicle = ticket.vehicle
+    ticket.close!
+    puts "Unpark a vehicle with vehicle plate #{vehicle.plate}, and color #{vehicle.color}"
   end
 
   def vehicles_with_color(color)
@@ -113,56 +116,4 @@ class ParkingLot
   def find_spots_for_vehicle_color(color)
     @floors.flat_map { |floor| floor.find_spot_by_color(color) }
   end
-
-  def vehicle_already_parked!
-    existing_vehicle = vehicle_with_plate(vehicle_plate)
-    raise ArgumentError, "Vehicle with #{vehicle_plate} already parked!" if existing_vehicle
-  end
 end
-
-# lot = ParkingLot.instance
-
-# floor1 = Floor.new('F1')
-# floor2 = Floor.new('F2')
-
-# floor1.add_spot('F1-S1')
-# floor1.add_spot('F1-S2')
-
-# floor2.add_spot('F2-S1')
-# floor2.add_spot('F2-S2')
-# floor2.add_spot('F2-S3')
-# floor2.add_spot('F2-S4')
-
-# lot.add_floor(floor1).add_floor(floor2)
-
-# # lot.status
-
-# lot.vehicle_with_plate('abcd')
-
-# lot.park('MP-09-AB-0000', 'White')
-# lot.park('MP-09-CD-1111', 'White')
-
-# lot.park('MP-09-EF-2222', 'Red')
-# lot.park('MP-09-GH-3333', 'Blue')
-# lot.park('MP-09-IJ-4444', 'RED')
-# lot.park('MP-09-KL-5555', 'grey')
-
-# begin
-#   lot.unpark('MP-09-EF-0000')
-# rescue ParkingLot::VehicleNotFoundError => e
-#   puts e.message
-# end
-
-# lot.unpark('MP-09-EF-2222')
-
-# lot.park('MP-09-MN-6666', 'BLUE')
-
-# lot.status
-
-# lot.vehicle_with_plate('MP-09-AB-0000')
-
-# lot.vehicles_with_color('white')
-
-# begin
-# lot.park('1234', 'white')
-# rescue
