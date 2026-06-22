@@ -18,6 +18,10 @@ class Ticket
     @exit_time = nil
   end
 
+  def duration
+    exit_time - entry_time
+  end
+
   def close!
     raise 'Already closed' unless exit_time
 
