@@ -1,0 +1,5 @@
+https://rubyguides.dev/tutorials/ruby-fundamentals/ruby-file-io/
+https://rubyguides.dev/cookbooks/ruby-cookbook-files/
+https://www.rubyguides.com/2019/02/ruby-io/
+https://rubyguides.dev/tutorials/ruby-for-devops/ruby-scripting-basics/
+https://rubyguides.dev/tutorials/ruby-for-devops/ruby-scripting-basics/
