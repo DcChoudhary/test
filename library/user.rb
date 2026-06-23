@@ -20,4 +20,8 @@ class User
   def borrowed?(copy)
     borrowed_copies.any? { |borrowed_copy| borrowed_copy.id == copy.id }
   end
+
+  def return_copy(copy)
+    @borrowed_copies.delete(copy)
+  end
 end

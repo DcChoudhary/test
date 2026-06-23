@@ -76,6 +76,12 @@ class Library
     user = find_or_create_user(user_id)
     _, copy = find_copy(copy_id)
     copy.borrow(user, due_date)
+    puts "Copy #{copy.id} of book #{copy.book.id} is assigned to user #{user.id}"
+  end
+
+  def return_book_copy(copy_id)
+    _, copy = find_copy(copy_id)
+    copy.return_copy
   end
 
   def to_s
@@ -108,7 +114,7 @@ class Library
     existing_user = @users[user_id]
     user = existing_user || User.new(user_id)
 
-    @users[user.id] << user unless existing_user
+    @users[user.id] = user unless existing_user
     user
   end
 
