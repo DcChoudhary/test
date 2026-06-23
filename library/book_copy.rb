@@ -9,8 +9,6 @@ class BookCopy
   class MaxBorrowingCapacityReachError < StandardError; end
   class CopyAlreadyBorrowedError < StandardError; end
 
-  BORROW_DURATION = 5
-
   def initialize(id, book)
     @id = id
     @book = book
@@ -27,9 +25,8 @@ class BookCopy
   end
 
   def borrow(user, due_date)
-    max_capacity = User::MAX_BORROW_COPIES
     if user.borrowed_copies.size >= User::MAX_BORROW_COPIES
-      raise MaxBorrowingCapacityReachError, "User already borrowed #{max_capacity}"
+      raise MaxBorrowingCapacityReachError, "User already borrowed #{User::MAX_BORROW_COPIES}"
     end
 
     raise CopyAlreadyBorrowedError, 'User already borrowed the book' if user.borrowed?(self)

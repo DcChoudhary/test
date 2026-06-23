@@ -6,6 +6,8 @@
 class Book
   attr_reader :id, :copies, :title, :authors, :publishers
 
+  class NoBookAvailableError < StandardError; end
+
   def initialize(id, title, authors, publishers)
     @id = id
     @title = title
@@ -26,7 +28,7 @@ class Book
 
   def borrow_book(user, due_date)
     copy = available_copy
-    raise NoBookAvailable, "No copy of book #{id} available" unless copy
+    raise NoBookAvailableError, "No copy of book #{id} available" unless copy
 
     copy.borrow(user, due_date)
   end

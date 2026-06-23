@@ -57,23 +57,24 @@ class Library
   end
 
   def remove_book_copy(copy_id)
-    copy = nil
-    rack = @racks.find { |rack| copy = rack.find_copy(copy_id) }
-    raise NoBookCopyFoundError, "Book copy with id #{copy_id} not found in any rack" unless copy
+    rack, copy = find_copy(copy_id)
 
     rack.remove_copy(copy)
     copy.book.remove_copy(copy)
   end
 
   def borrow_book(book_id, user_id, due_date)
-    existing_user = @users[user_id]
-    user = existing_user || User.new(user_id)
-
-    @users[user.id] << user unless existing_user
+    user = find_or_create_user(user_id)
 
     book = find_book(book_id)
     copy = book.borrow_book(user, due_date)
     puts "Copy #{copy.id} of book #{book.id} is assigned to user #{user.id}"
+  end
+
+  def borrow_book_copy(copy_id, user_id, due_date)
+    user = find_or_create_user(user_id)
+    _, copy = find_copy(copy_id)
+    copy.borrow(user, due_date)
   end
 
   def to_s
@@ -90,8 +91,24 @@ class Library
 
   private
 
+  def find_copy(copy_id)
+    copy = nil
+    rack = @racks.find { |rack| copy = rack.find_copy(copy_id) }
+    raise NoBookCopyFoundError, "Book copy with id #{copy_id} not found" unless copy
+
+    [rack, copy]
+  end
+
   def find_book(book_id)
     @books.find { |book| book.id == book_id }
+  end
+
+  def find_or_create_user(user_id)
+    existing_user = @users[user_id]
+    user = existing_user || User.new(user_id)
+
+    @users[user.id] << user unless existing_user
+    user
   end
 
   def create_book(id, title, authors, publishers)
