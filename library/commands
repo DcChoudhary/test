@@ -8,6 +8,7 @@ remove_book_copy copy7
 
 borrow_book <book_id> <user_id> <due_date>
 borrow_book_copy <book_copy_id> <user_id> <due_date>
+
 return_book_copy <book_copy_id>
 print_borrowed <user_id>
 search <attribute> <attribute_value>

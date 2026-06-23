@@ -21,6 +21,7 @@ class Library
     @id = nil
     @racks = []
     @books = []
+    @users = {}
     @logger = Logger.new($stdout)
   end
 
@@ -62,6 +63,17 @@ class Library
 
     rack.remove_copy(copy)
     copy.book.remove_copy(copy)
+  end
+
+  def borrow_book(book_id, user_id, due_date)
+    existing_user = @users[user_id]
+    user = existing_user || User.new(user_id)
+
+    @users[user.id] << user unless existing_user
+
+    book = find_book(book_id)
+    copy = book.borrow_book(user, due_date)
+    puts "Copy #{copy.id} of book #{book.id} is assigned to user #{user.id}"
   end
 
   def to_s

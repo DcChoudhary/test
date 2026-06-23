@@ -9,7 +9,7 @@ require_relative './library'
 class CommandProcessor
   class InvalidCommandError < StandardError; end
 
-  ALLOWED_COMMANDS = %w[create_library add_book remove_book_copy status].freeze
+  ALLOWED_COMMANDS = %w[create_library add_book remove_book_copy borrow_book borrow_book_copy status].freeze
 
   def initialize
     @lib = Library.instance
@@ -22,7 +22,7 @@ class CommandProcessor
 
     send(command.to_sym, args)
   rescue InvalidCommandError, Library::RackOutOfBoundError, Rack::BookAlreadyPresentError,
-         Library::NoBookCopyFoundError => e
+         Library::NoBookCopyFoundError, BookCopy::MaxBorrowingCapacityReachError, BookCopy::CopyAlreadyBorrowedError => e
     puts "ERROR: #{e.message}"
   end
 
@@ -41,6 +41,10 @@ class CommandProcessor
 
   def remove_book_copy(args)
     @lib.remove_book_copy(*args)
+  end
+
+  def borrow_book(args)
+    @lib.borrow_book(args)
   end
 
   def status(_)

@@ -4,14 +4,37 @@
 # This class is responsible to manage the book copies
 #
 class BookCopy
-  attr_reader :id, :book
+  attr_reader :id, :book, :user, :due_date
+
+  class MaxBorrowingCapacityReachError < StandardError; end
+  class CopyAlreadyBorrowedError < StandardError; end
+
+  BORROW_DURATION = 5
 
   def initialize(id, book)
     @id = id
     @book = book
+    @user = nil
+    @due_date = nil
   end
 
-  def display
-    puts "Copy #{id} of Book #{book.title}"
+  def to_s
+    "Copy #{id} of Book #{book.title}"
+  end
+
+  def available?
+    due_date.nil?
+  end
+
+  def borrow(user, due_date)
+    max_capacity = User::MAX_BORROW_COPIES
+    if user.borrowed_copies.size >= User::MAX_BORROW_COPIES
+      raise MaxBorrowingCapacityReachError, "User already borrowed #{max_capacity}"
+    end
+
+    raise CopyAlreadyBorrowedError, 'User already borrowed the book' if user.borrowed?(self)
+
+    @user = user
+    @due_date = Time.parse(due_date).to_date
   end
 end

@@ -24,6 +24,17 @@ class Book
     @copies.delete(copy)
   end
 
+  def borrow_book(user, due_date)
+    copy = available_copy
+    raise NoBookAvailable, "No copy of book #{id} available" unless copy
+
+    copy.borrow(user, due_date)
+  end
+
+  def available_copy
+    copies.find(&:available?)
+  end
+
   def to_s
     <<~TEXT
       ---------------
