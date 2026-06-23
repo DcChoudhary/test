@@ -14,9 +14,6 @@ class Rack
   end
 
   def add_copy(copy)
-    # logger = Logger.new($stdout)
-    # logger.info("copy instance --> #{copy.inspect}")
-    # logger.info("@copies instance --> #{@copies.inspect}")
     if @copies.any? { |existing_copy| existing_copy.book.id == copy.book.id }
       raise BookAlreadyPresentError, "Book with #{copy.book.id} already present on the shelf"
     end

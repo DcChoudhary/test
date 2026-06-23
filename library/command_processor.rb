@@ -9,26 +9,25 @@ require_relative './library'
 class CommandProcessor
   class InvalidCommandError < StandardError; end
 
+  COMMANDS = {
+    'create_library' => lambda { |args|
+      lot_id, rack_size = *args
+      @lib.configure(lot_id)
+      @lib.add_racks(rack_size.to_i)
+    },
+    'add_book' => ->(args) { @lib.add_book(*args) },
+    'stauts' => -> { @lib.status }
+  }.freeze
+
   def initialize
     @lib = Library.instance
     @logger = Logger.new($stdout)
   end
 
   def process(command, args)
-    case command
-    when 'create_library'
-      lot_id, rack_size = *args
-      @lib.configure(lot_id)
-      @lib.add_racks(rack_size.to_i)
-    when 'add_book'
-      @logger.info("ARGS--> #{args}")
-      @lib.add_book(*args)
-    when 'status'
-      @lib.status
-    else
-      raise InvalidCommandError, 'Invalid command'
-    end
-  rescue InvalidCommandError, Library::RackOutOfBoundError => e
+    @logger.info('Start processing command...')
+    raise InvalidCommandError, 'Invalid command' if COMMANDS[command]&.call
+  rescue InvalidCommandError, Library::RackOutOfBoundError, Rack::BookAlreadyPresentError => e
     puts "ERROR: #{e.message}"
   end
 end

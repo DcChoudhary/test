@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
-require_relative './book'
+require_relative 'book'
 require_relative 'rack'
 require_relative 'book_copy'
 
@@ -19,6 +19,7 @@ class Library
     @id = nil
     @racks = []
     @books = []
+    @logger = Logger.new($stdout)
   end
 
   def configure(id)
@@ -50,8 +51,7 @@ class Library
 
     copy_ids.each do |copy_id|
       rack = available_rack(book)
-      logger = Logger.new($stdout)
-      logger.info("Copy #{copy_id} adding to rack #{rack.id}")
+      @logger.info("Copy #{copy_id} adding to rack #{rack.id}")
       rack.add_copy(create_copy(copy_id, book))
     end
   end
