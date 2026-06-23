@@ -12,7 +12,8 @@ borrow_book book_01 user1 2026-06-28
 borrow_book_copy copy1 user1 2026-06-28
 
 return_book_copy copy1
-print_borrowed <user_id>
+print_borrowed user1
+
 search <attribute> <attribute_value>
 Possible values of attribute: book_id, author, publisher
 exit

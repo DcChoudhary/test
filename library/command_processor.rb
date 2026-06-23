@@ -10,7 +10,7 @@ class CommandProcessor
   class InvalidCommandError < StandardError; end
 
   ALLOWED_COMMANDS = %w[create_library add_book remove_book_copy borrow_book borrow_book_copy return_book_copy
-                        status].freeze
+                        print_borrowed status].freeze
 
   def initialize
     @lib = Library.instance
@@ -54,6 +54,10 @@ class CommandProcessor
 
   def return_book_copy(args)
     @lib.return_book_copy(*args)
+  end
+
+  def print_borrowed(args)
+    @lib.print_borrowed(*args)
   end
 
   def status(_)

@@ -84,6 +84,13 @@ class Library
     copy.return_copy
   end
 
+  def print_borrowed(user_id)
+    user = @users[user_id]
+    raise UserNotFoundError, "User not found with #{user_id}" unless user
+
+    user.borrowed_copies.each { |copy| puts copy }
+  end
+
   def to_s
     "Library #{id} has #{racks.size} racks"
   end

@@ -20,7 +20,10 @@ class BookCopy
   end
 
   def to_s
-    "Copy #{id} of Book #{book.title}"
+    <<~TEXT
+      #{'=' * 10}
+      "Copy #{id} of Book #{book.id}"
+    TEXT
   end
 
   def available?
