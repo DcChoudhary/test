@@ -26,9 +26,6 @@ class Rack
   end
 
   def find_copy(copy_id)
-    logger = Logger.new($stdout)
-    logger.info("copies --> #{copies.inspect}")
-    logger.info("copy_id --> #{copy_id}")
     copies.find { |copy| copy.id == copy_id }
   end
 

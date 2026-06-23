@@ -56,22 +56,16 @@ class Library
   end
 
   def remove_book_copy(copy_id)
-    copy = nil, rack_with_copy = nil
-    @logger.info("copy_id ---> #{copy_id}")
-    @racks.each do |rack|
-      copy = rack.find_copy(copy_id)
-      rack_with_copy = rack
-      break if copy
-    end
-
+    copy = nil
+    rack = @racks.find { |rack| copy = rack.find_copy(copy_id) }
     raise NoBookCopyFoundError, "Book copy with id #{copy_id} not found in any rack" unless copy
 
-    rack_with_copy.remove_copy(copy)
+    rack.remove_copy(copy)
     copy.book.remove_copy(copy)
   end
 
   def to_s
-    puts "Library #{id} has #{racks.size} racks"
+    "Library #{id} has #{racks.size} racks"
   end
 
   def status
@@ -83,9 +77,6 @@ class Library
   end
 
   private
-
-  def find_copy(copy_id)
-  end
 
   def find_book(book_id)
     @books.find { |book| book.id == book_id }
@@ -101,7 +92,7 @@ class Library
 
   def available_rack(book)
     rack = @racks.find { |rack| rack.available_for?(book) }
-    rack || @racks.first
+    rack || raise(RackOutOfBoundError, "No available rack for book #{book.id}")
   end
 
   def validate_available_rack(book, copy_ids)
