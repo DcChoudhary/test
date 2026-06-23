@@ -15,6 +15,7 @@ class Library
   attr_reader :id, :racks
 
   class RackOutOfBoundError < StandardError; end
+  class NoBookCopyFoundError < StandardError; end
 
   def initialize
     @id = nil
@@ -42,7 +43,7 @@ class Library
     end
 
     existing_book = find_book(id)
-    validate_available_rack(book, copy_ids) if existing_book
+    validate_available_rack(existing_book, copy_ids) if existing_book
 
     book = existing_book || create_book(id, title, authors, publishers)
     @books << book unless existing_book
@@ -52,6 +53,21 @@ class Library
       @logger.info("Copy #{copy_id} adding to rack #{rack.id}")
       rack.add_copy(create_copy(copy_id, book))
     end
+  end
+
+  def remove_book_copy(copy_id)
+    copy = nil, rack_with_copy = nil
+    @logger.info("copy_id ---> #{copy_id}")
+    @racks.each do |rack|
+      copy = rack.find_copy(copy_id)
+      rack_with_copy = rack
+      break if copy
+    end
+
+    raise NoBookCopyFoundError, "Book copy with id #{copy_id} not found in any rack" unless copy
+
+    rack_with_copy.remove_copy(copy)
+    copy.book.remove_copy(copy)
   end
 
   def to_s
@@ -67,6 +83,9 @@ class Library
   end
 
   private
+
+  def find_copy(copy_id)
+  end
 
   def find_book(book_id)
     @books.find { |book| book.id == book_id }

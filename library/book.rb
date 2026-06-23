@@ -20,6 +20,10 @@ class Book
     copy
   end
 
+  def remove_copy(copy)
+    @copies.delete(copy)
+  end
+
   def to_s
     <<~TEXT
       ---------------

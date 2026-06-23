@@ -21,6 +21,17 @@ class Rack
     @copies << copy
   end
 
+  def remove_copy(copy)
+    @copies.delete(copy)
+  end
+
+  def find_copy(copy_id)
+    logger = Logger.new($stdout)
+    logger.info("copies --> #{copies.inspect}")
+    logger.info("copy_id --> #{copy_id}")
+    copies.find { |copy| copy.id == copy_id }
+  end
+
   def available_for?(book)
     copies.none? { |copy| copy.book.id == book.id }
   end
