@@ -1,0 +1,19 @@
+
+
+create_library LBY000 10
+
+add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy6,copy7,copy8,copy9,copy10
+
+add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy1,copy2,copy3,copy4,copy5
+
+
+
+
+    remove_book_copy <book_copy_id>
+borrow_book <book_id> <user_id> <due_date>
+borrow_book_copy <book_copy_id> <user_id> <due_date>
+return_book_copy <book_copy_id>
+print_borrowed <user_id>
+search <attribute> <attribute_value>
+Possible values of attribute: book_id, author, publisher
+exit

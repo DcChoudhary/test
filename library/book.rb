@@ -4,15 +4,27 @@
 # This class hold the details of book and book related operation
 #
 class Book
-  def initialize(id, title, author, publisher)
+  attr_reader :id, :copies, :title, :authors, :publishers
+
+  def initialize(id, title, authors, publishers)
     @id = id
     @title = title
-    @author = author
-    @publisher = publisher
-    @book_copies = []
+    @authors = authors
+    @publishers = publishers
+    @copies = []
   end
 
   def add_copy(copy)
-    @book_copies << copy
+    @copies << copy
+  end
+
+  def to_s
+    <<~TEXT
+      ---------------
+      Book id: #{id}
+      Title:  #{title}
+      Authors: #{authors.join(',')}
+      Publishers: #{publishers.join(',')}
+    TEXT
   end
 end

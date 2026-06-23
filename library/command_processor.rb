@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'logger'
 require_relative './library'
 
 ##
@@ -9,17 +10,20 @@ class CommandProcessor
   class InvalidCommandError < StandardError; end
 
   def initialize
-    @lib = Library.new
+    @lib = Library.instance
+    @logger = Logger.new($stdout)
   end
 
-  def process(command, *args)
+  def process(command, args)
     case command
     when 'create_library'
-      @lib.configure(args[0])
-      @lib.add_racks(args[1])
+      lot_id, rack_size = *args
+      @lib.configure(lot_id)
+      @lib.add_racks(rack_size.to_i)
     when 'add_book'
+      @logger.info("ARGS--> #{args}")
       @lib.add_book(*args)
-    when status
+    when 'status'
       @lib.status
     else
       raise InvalidCommandError, 'Invalid command'

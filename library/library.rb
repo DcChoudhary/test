@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require 'singleton'
+require_relative './book'
+require_relative 'rack'
+require_relative 'book_copy'
 
 ##
 # This class is responsible for all the operation perform on library
@@ -15,6 +18,7 @@ class Library
   def initialize
     @id = nil
     @racks = []
+    @books = []
   end
 
   def configure(id)
@@ -26,22 +30,28 @@ class Library
     @id = id
   end
 
-  def add_rack(size)
-    @rack << Rack.new(id)
+  def add_racks(size)
+    size.times { |index| @racks << Rack.new(index + 1) }
   end
 
   def add_book(id, title, authors, publishers, copy_ids)
+    copy_ids = copy_ids.split(',')
+    authors = authors.split(',')
+    publishers = publishers.split(',')
     if @racks.size < copy_ids.size
-      raise RackOutOfBoundError, "There is only #{@racks.size}, please don't pass book copies more then that"
+      raise RackOutOfBoundError, "There is only #{@racks.size} racks, please don't pass book copies more then that"
     end
 
     book = find_book(id)
-    validate_available_rack(book, copy_ids)
+    validate_available_rack(book, copy_ids) if book
 
     book ||= create_book(id, title, authors, publishers)
+    @books << book
 
     copy_ids.each do |copy_id|
-      rack = available_rack(copy_id)
+      rack = available_rack(book)
+      logger = Logger.new($stdout)
+      logger.info("Copy #{copy_id} adding to rack #{rack.id}")
       rack.add_copy(create_copy(copy_id, book))
     end
   end
@@ -60,21 +70,14 @@ class Library
     racks.each do |rack|
       divider
       rack.display
-      copies.each do |copy|
-        divider
-        copy.display
-      end
+      rack.copies.each { |copy| puts copy.book }
     end
   end
 
   private
 
   def find_book(book_id)
-    @racks.flat_map do |rack|
-      book_id = rack[book_id]
-      return book_id if book_id
-    end
-    nil
+    @books.find { |book| book.id == book_id }
   end
 
   def create_book(id, title, authors, publishers)
@@ -85,6 +88,11 @@ class Library
     copy = BookCopy.new(copy_id, book)
     book.add_copy(copy)
     copy
+  end
+
+  def available_rack(book)
+    rack = @racks.find { |rack| rack.copy?(book) }
+    rack || @racks.first
   end
 
   def validate_available_rack(book, copy_ids)
