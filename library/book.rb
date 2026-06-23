@@ -14,8 +14,10 @@ class Book
     @copies = []
   end
 
-  def add_copy(copy)
+  def add_copy(copy_id)
+    copy = BookCopy.new(copy_id, self)
     @copies << copy
+    copy
   end
 
   def to_s

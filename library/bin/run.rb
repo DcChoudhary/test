@@ -6,7 +6,11 @@ processor = CommandProcessor.new
 
 loop do
   print '> '
-  command, *args = gets.chomp.split(' ')
+
+  input = gets
+  break if input.nil?
+
+  command, *args = input.chomp.split
   next if command.nil?
   break if command == 'exit'
 

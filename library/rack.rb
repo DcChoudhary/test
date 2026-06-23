@@ -21,11 +21,11 @@ class Rack
     @copies << copy
   end
 
-  def copy?(book)
+  def available_for?(book)
     copies.none? { |copy| copy.book.id == book.id }
   end
 
-  def display
-    puts "Rack #{id} has #{copies.size} copies"
+  def to_s
+    "Rack #{id} has #{copies.size} copies"
   end
 end

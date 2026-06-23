@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
+require 'logger'
 require_relative 'book'
 require_relative 'rack'
 require_relative 'book_copy'
@@ -36,18 +37,15 @@ class Library
   end
 
   def add_book(id, title, authors, publishers, copy_ids)
-    copy_ids = copy_ids.split(',')
-    authors = authors.split(',')
-    publishers = publishers.split(',')
     if @racks.size < copy_ids.size
       raise RackOutOfBoundError, "There is only #{@racks.size} racks, please don't pass book copies more then that"
     end
 
-    book = find_book(id)
-    validate_available_rack(book, copy_ids) if book
+    existing_book = find_book(id)
+    validate_available_rack(book, copy_ids) if existing_book
 
-    book ||= create_book(id, title, authors, publishers)
-    @books << book
+    book = existing_book || create_book(id, title, authors, publishers)
+    @books << book unless existing_book
 
     copy_ids.each do |copy_id|
       rack = available_rack(book)
@@ -56,20 +54,14 @@ class Library
     end
   end
 
-  def display
+  def to_s
     puts "Library #{id} has #{racks.size} racks"
   end
 
-  def divider
-    puts ['-', '+', '='].sample * 10
-  end
-
   def status
-    divider
-    display
+    puts self
     racks.each do |rack|
-      divider
-      rack.display
+      puts rack
       rack.copies.each { |copy| puts copy.book }
     end
   end
@@ -85,13 +77,11 @@ class Library
   end
 
   def create_copy(copy_id, book)
-    copy = BookCopy.new(copy_id, book)
-    book.add_copy(copy)
-    copy
+    book.add_copy(copy_id)
   end
 
   def available_rack(book)
-    rack = @racks.find { |rack| rack.copy?(book) }
+    rack = @racks.find { |rack| rack.available_for?(book) }
     rack || @racks.first
   end
 
