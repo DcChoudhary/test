@@ -17,13 +17,17 @@ class Book
   end
 
   def add_copy(copy_id)
+    if @copies.any? { |existing_copy| existing_copy.id == copy_id }
+      raise Rack::BookAlreadyPresentError, "Book with #{copy_id} already present on the shelf"
+    end
+
     copy = BookCopy.new(copy_id, self)
     @copies << copy
     copy
   end
 
   def remove_copy(copy)
-    @copies.delete(copy)
+    @copies.delete_if { |existing_copy| existing_copy.id == copy.id }
   end
 
   def borrow_book(user, due_date)

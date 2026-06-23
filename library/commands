@@ -1,9 +1,10 @@
 create_library LBY000 10
 add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy6,copy7,copy8,copy9,copy10
-add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy1,copy2,copy3,copy4,copy5
-remove_book_copy copy5
+add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy2,copy3,copy4,copy5
+remove_book_copy copy6
 remove_book_copy copy7
 
+add_book book_01 my_book deepak,neeraj,vishal pub1,pub2,pub3 copy6
 
 
 borrow_book <book_id> <user_id> <due_date>

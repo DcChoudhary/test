@@ -22,7 +22,8 @@ class CommandProcessor
 
     send(command.to_sym, args)
   rescue InvalidCommandError, Library::RackOutOfBoundError, Rack::BookAlreadyPresentError,
-         Library::NoBookCopyFoundError, BookCopy::MaxBorrowingCapacityReachError, BookCopy::CopyAlreadyBorrowedError, NoBookAvailableError => e
+         Library::NoBookCopyFoundError, BookCopy::MaxBorrowingCapacityReachError,
+         BookCopy::CopyAlreadyBorrowedError, Book::NoBookAvailableError => e
     puts "ERROR: #{e.message}"
   end
 

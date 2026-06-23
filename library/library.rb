@@ -5,6 +5,7 @@ require 'logger'
 require_relative 'book'
 require_relative 'rack'
 require_relative 'book_copy'
+require_relative 'user'
 
 ##
 # This class is responsible for all the operation perform on library

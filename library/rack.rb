@@ -22,7 +22,7 @@ class Rack
   end
 
   def remove_copy(copy)
-    @copies.delete(copy)
+    @copies.delete_if { |existing_copy| existing_copy.id == copy.id }
   end
 
   def find_copy(copy_id)
