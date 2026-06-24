@@ -36,7 +36,21 @@ class BankingSystem
     find_account(account_id).withdraw(amount)
   end
 
+  def transfer(from_account_id, to_account_id, amount)
+    from_account = find_account(from_account_id)
+    to_account = find_account(to_account_id)
+
+    from_account.transfere_debit(amount, same_bank)
+    to_account.transfere_credit(amount)
+  end
+
   private
+
+  def same_bank(from_account, to_account)
+    @banks.select do |_, bank|
+      [from_account, to_account].include?(bank.account)
+    end.size == 1
+  end
 
   def find_account(account_id)
     account = @accounts[account_id]

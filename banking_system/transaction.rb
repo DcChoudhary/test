@@ -15,12 +15,13 @@ class Transaction
 
   @@next_id = 0
 
-  def initialize(amount, type, transfered_to = nil, parent_reference_id = nil)
+  def initialize(amount, type, transfered_to = nil, transfered_from = nil, parent_reference_id = nil)
     @id = generate_id
     @parent_reference_id = parent_reference_id
     @amount = amount
     @type = type
     @transfered_to = transfered_to
+    @transfered_from = transfered_from
     @created_at = Time.now
   end
 
