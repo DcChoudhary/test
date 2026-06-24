@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
+require_relative 'account'
+
 ##
-# This class is sub class of the account class and hold the logic related to the saving account only
+# This class is sub class of the account class and hold the logic related to the savings account only
 #
-class SavingAccount < Account
+class SavingsAccount < Account
   class MinimumBalanceError < ApplicationError; end
 
   MINIMUM_BALANCE = 500
 
   def initialize(id, balance)
-    super(id, balance, :saving)
+    super(id, balance, :savings)
   end
 
   def withdraw(amount)

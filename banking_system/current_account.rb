@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'account'
+
 ##
 # This is a sub class of the account class and hold the logic for current account only
 #
@@ -25,7 +27,7 @@ class CurrentAccount < Account
             "You have reached you daily limit of #{DAILY_WITHDRAW_LIMIT}"
     end
 
-    rasie DailyWithdrawLimitError, "You can only withdraw #{daily_remeaning_limit}" if daily_remeaning_limit < amount
+    raise DailyWithdrawLimitError, "You can only withdraw #{daily_remeaning_limit}" if daily_remeaning_limit < amount
   end
 
   def daily_remeaning_limit

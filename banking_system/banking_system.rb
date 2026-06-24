@@ -30,25 +30,25 @@ class BankingSystem
     bank = @banks[bank_id]
     raise BankNotFoundError, "Bank with id #{bank_id} not found" unless bank
 
-    account = bank.create_account(account_id, account_type, balance)
+    account = bank.create_account(account_id, account_type, balance.to_f)
     @accounts[account.id] = account
   end
 
   # deposit <account_id> <amount>
   def deposit(account_id, amount)
-    find_account(account_id).deposit(amount)
+    find_account(account_id).deposit(amount.to_f)
   end
 
   def withdraw(account_id, amount)
-    find_account(account_id).withdraw(amount)
+    find_account(account_id).withdraw(amount.to_f)
   end
 
   def transfer(from_account_id, to_account_id, amount)
     from_account = find_account(from_account_id)
     to_account = find_account(to_account_id)
 
-    from_account.transfer_debit(amount, same_bank)
-    to_account.transfer_credit(amount)
+    from_account.transfer_debit(amount.to_f, same_bank)
+    to_account.transfer_credit(amount.to_f)
   end
 
   def balance(account_id)

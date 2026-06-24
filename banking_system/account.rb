@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'transaction'
+require_relative 'transaction'
 
 ##
 # This class holds the account details
@@ -10,11 +10,6 @@ class Account
 
   class InitialBalanceError < ApplicationError; end
   class InsufficientBalanceError < ApplicationError; end
-
-  ACCOUNT_TYPES = {
-    saving: SavingAccount,
-    current: CurrentAccount
-  }.freeze
 
   INITIAL_BALANCE = 500
   CROSS_BANK_TRANSACTION_FEE_PERCENTAGE = 20
@@ -90,7 +85,7 @@ class Account
   def initial_balance_check(balance)
     return unless balance < INITIAL_BALANCE
 
-    rasie InitialBalanceError,
+    raise InitialBalanceError,
           "Account will open with the minimum initial blance #{INITIAL_BALANCE}"
   end
 end
