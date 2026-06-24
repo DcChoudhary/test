@@ -44,6 +44,17 @@ class BankingSystem
     to_account.transfere_credit(amount)
   end
 
+  def balance(account_id)
+    balance = find_account(account_id).balance
+    puts "Account #{account_id}, current balance is #{balance}"
+  end
+
+  def statement(account_id)
+    find_account(account_id).transactions.each do |transaction|
+      puts transaction
+    end
+  end
+
   private
 
   def same_bank(from_account, to_account)

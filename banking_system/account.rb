@@ -55,7 +55,7 @@ class Account
     @balance -= amount
     puts "Amount #{amount} is debited from account #{id}"
     transaction = create_transaction(actual_amount, Transaction::TYPES[:transfer], self)
-    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfer_fee], nil, transaction)
+    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfere_service_fee], nil, transaction.id)
   end
 
   def transfere_credit(amount)

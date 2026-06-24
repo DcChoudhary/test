@@ -4,7 +4,7 @@
 # This class hold all the transaction for the acount
 #
 class Transaction
-  attr_reader :id, :amount, :type, :transfered_to
+  attr_reader :id, :amount, :type, :transfered_to, :created_at, :transfered_from
 
   TYPES = {
     deposit: 'deposit',
@@ -25,7 +25,29 @@ class Transaction
     @created_at = Time.now
   end
 
+  def to_s
+    message = case type
+              when 'deposit'
+                "Amount #{amount} deposited at #{created_at}"
+              when 'withdraw'
+                "Amount #{amount} withdraw at #{created_at}"
+              when 'transfere'
+                transfere_message
+              when 'transfere service fee'
+                "Amount #{amount} is charged for cross bank transfere from transaction id #{parent_reference_id} at #{created_at}"
+              end
+    "Transaction-- #{message}"
+  end
+
   private
+
+  def transfere_message
+    if transfered_to.present?
+      "Amount #{amount} is transfered to #{transfered_to.id} account at #{created_at}"
+    else
+      "Amount #{amount} is transfered from #{transfered_from.id} account at #{created_at}"
+    end
+  end
 
   def generate_id
     @@next_id += 1
