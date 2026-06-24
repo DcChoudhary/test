@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'transaction'
+
 ##
 # This class holds the account details
 #
@@ -44,21 +46,21 @@ class Account
     balance - amount
   end
 
-  def transfere_debit(amount, same_bank)
+  def transfer_debit(amount, same_bank)
     actual_amount = amount
     amount += extra_fee(actual_amount) unless same_bank
     unless same_bank
-      puts "Cross bank detected, you will be charged #{CROSS_BANK_TRANSACTION_FEE_PERCENTAGE} % extra of transfere amount"
+      puts "Cross bank detected, you will be charged #{CROSS_BANK_TRANSACTION_FEE_PERCENTAGE} % extra of transfer amount"
     end
     balance_check(amount)
 
     @balance -= amount
     puts "Amount #{amount} is debited from account #{id}"
     transaction = create_transaction(actual_amount, Transaction::TYPES[:transfer], self)
-    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfere_service_fee], nil, transaction.id)
+    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfer_service_fee], nil, transaction.id)
   end
 
-  def transfere_credit(amount)
+  def transfer_credit(amount)
     @balance += amount
     create_transaction(amount, Transaction::TYPES[:transfer], nil, self)
     puts "Amount #{amount} is credited, current balance is #{balance}"
@@ -71,8 +73,8 @@ class Account
 
   private
 
-  def create_transaction(amount, type, transfere_to = nil)
-    transaction = Transaction.new(amount, type, transfere_to)
+  def create_transaction(amount, type, transfer_to = nil)
+    transaction = Transaction.new(amount, type, transfer_to)
     @transaction << transaction
     transaction
   end

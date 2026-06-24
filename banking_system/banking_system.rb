@@ -47,8 +47,8 @@ class BankingSystem
     from_account = find_account(from_account_id)
     to_account = find_account(to_account_id)
 
-    from_account.transfere_debit(amount, same_bank)
-    to_account.transfere_credit(amount)
+    from_account.transfer_debit(amount, same_bank)
+    to_account.transfer_credit(amount)
   end
 
   def balance(account_id)
