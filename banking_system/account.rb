@@ -7,6 +7,12 @@ class Account
   attr_reader :id, :type, :balance, :closed
 
   class InitialBalanceError < StandardError; end
+  class InsufficientBalanceError < StandardError; end
+
+  ACCOUNT_TYPES = {
+    saving: SavingAccount,
+    current: CurrentAccount
+  }.freeze
 
   INITIAL_BALANCE = 500
 
@@ -23,6 +29,18 @@ class Account
     @balance += amount
     create_transaction(amount, Transaction::TYPES[:deposit])
     puts "Amount #{amount} is succefully deposit, current balance is #{balance}"
+  end
+
+  def withdraw(amount)
+    raise InsufficientBalanceError, 'Insufficient balance' if remianing_balance(amount).negavite?
+
+    @balance -= amount
+    create_transaction(amount, Transaction::TYPES[:withdraw])
+    puts "Amount #{amount} is succefully withdraw, current balance is #{balance}"
+  end
+
+  def remianing_balance(amount)
+    balance - amount
   end
 
   private

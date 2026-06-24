@@ -21,6 +21,7 @@ class Transaction
     @amount = amount
     @type = type
     @transfered_to = transfered_to
+    @created_at = Time.now
   end
 
   private

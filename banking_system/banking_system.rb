@@ -29,8 +29,17 @@ class BankingSystem
 
   # deposit <account_id> <amount>
   def deposit(account_id, amount)
+    find_account(account_id).deposit(amount)
+  end
+
+  def withdraw(account_id, amount)
+    find_account(account_id).withdraw(amount)
+  end
+
+  private
+
+  def find_account(account_id)
     account = @accounts[account_id]
     rise AccountNotFoundError, "Account not found with id #{account_id}" unless account
-    account.deposit(amount)
   end
 end

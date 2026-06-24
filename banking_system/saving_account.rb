@@ -10,11 +10,10 @@ class SavingAccount < Account
     super(id, balance, :saving)
   end
 
-  def remianing_balance(amount)
-    balance - amount
+  def withdraw(amount)
+    minimum_balance_check(amount)
+    super(amount)
   end
-
-  def withdraw(amount); end
 
   private
 
@@ -22,6 +21,7 @@ class SavingAccount < Account
     return if remianing_balance(amount) >= MINIMUM_BALANCE
 
     raise MinimumBalanceError,
-          "After the current transaction the balance go low then the minimum balance limit of #{MINIMUM_BALANCE}"
+          "After the current transaction the balance go low then the minimum balance limit of #{MINIMUM_BALANCE},
+           you can only withdraw upto #{balance - MINIMUM_BALANCE}"
   end
 end
