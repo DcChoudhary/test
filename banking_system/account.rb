@@ -6,8 +6,8 @@
 class Account
   attr_reader :id, :type, :balance, :closed
 
-  class InitialBalanceError < StandardError; end
-  class InsufficientBalanceError < StandardError; end
+  class InitialBalanceError < ApplicationError; end
+  class InsufficientBalanceError < ApplicationError; end
 
   ACCOUNT_TYPES = {
     saving: SavingAccount,

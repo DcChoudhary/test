@@ -1,0 +1,240 @@
+# ─────────────────────────────────────────
+# BANK CREATION
+# ─────────────────────────────────────────
+
+# Happy path
+create_bank bank_01
+create_bank bank_02
+
+# Duplicate bank
+create_bank bank_01
+
+# Missing args
+create_bank
+
+
+# ─────────────────────────────────────────
+# ACCOUNT CREATION
+# ─────────────────────────────────────────
+
+# Happy path
+create_account bank_01 acc_001 savings 1000
+create_account bank_01 acc_002 current 5000
+create_account bank_02 acc_003 savings 2000
+create_account bank_02 acc_004 current 10000
+
+# Duplicate account id
+create_account bank_01 acc_001 savings 1000
+
+# Unknown bank
+create_account bank_99 acc_005 savings 1000
+
+# Invalid account type
+create_account bank_01 acc_005 premium 1000
+
+# Zero initial balance
+create_account bank_01 acc_005 savings 0
+
+# Negative initial balance
+create_account bank_01 acc_005 savings -500
+
+# Savings below minimum balance (500)
+create_account bank_01 acc_005 savings 499
+
+# Missing args
+create_account bank_01
+
+
+# ─────────────────────────────────────────
+# DEPOSIT
+# ─────────────────────────────────────────
+
+# Happy path
+deposit acc_001 500
+deposit acc_002 1000
+deposit acc_003 200
+deposit acc_004 5000
+
+# Zero amount
+deposit acc_001 0
+
+# Negative amount
+deposit acc_001 -100
+
+# Unknown account
+deposit acc_999 500
+
+# Missing args
+deposit acc_001
+
+
+# ─────────────────────────────────────────
+# WITHDRAW
+# ─────────────────────────────────────────
+
+# Happy path
+withdraw acc_001 200
+withdraw acc_002 1000
+withdraw acc_003 100
+withdraw acc_004 5000
+
+# Insufficient balance
+withdraw acc_001 99999
+
+# Savings - breach minimum balance (500)
+# acc_001 current balance should be 1300 (1000 + 500 - 200)
+# withdrawing 900 would leave 400 which is below 500
+withdraw acc_001 900
+
+# Savings - exact minimum balance boundary (should succeed)
+# withdrawing to exactly 500
+withdraw acc_001 800
+
+# Current - breach daily limit (50000)
+withdraw acc_002 50001
+
+# Current - exact daily limit boundary (should succeed)
+withdraw acc_004 50000
+
+# Current - multiple withdrawals hitting daily limit
+withdraw acc_002 30000
+withdraw acc_002 20001
+
+# Zero amount
+withdraw acc_001 0
+
+# Negative amount
+withdraw acc_001 -100
+
+# Unknown account
+withdraw acc_999 500
+
+# Missing args
+withdraw acc_001
+
+
+# ─────────────────────────────────────────
+# TRANSFER
+# ─────────────────────────────────────────
+
+# Happy path - same bank (no fee)
+transfer acc_001 acc_002 200
+
+# Happy path - cross bank (2% fee)
+# acc_001 sends 500, acc_001 debited 510, acc_003 receives 500
+transfer acc_001 acc_003 500
+
+# Cross bank - verify fee is applied correctly on large amount
+# acc_002 sends 1000, acc_002 debited 1020, acc_004 receives 1000
+transfer acc_002 acc_004 1000
+
+# Insufficient balance including fee
+# if acc_001 has exactly 700, transferring 700 cross bank needs 714 — should fail
+transfer acc_001 acc_003 700
+
+# Savings sender - transfer breaches minimum balance
+transfer acc_001 acc_002 99999
+
+# Transfer to self
+transfer acc_001 acc_001 100
+
+# Unknown sender
+transfer acc_999 acc_002 100
+
+# Unknown receiver
+transfer acc_001 acc_999 100
+
+# Zero amount
+transfer acc_001 acc_002 0
+
+# Negative amount
+transfer acc_001 acc_002 -100
+
+# Missing args
+transfer acc_001
+
+
+# ─────────────────────────────────────────
+# BALANCE
+# ─────────────────────────────────────────
+
+# Happy path
+balance acc_001
+balance acc_002
+balance acc_003
+balance acc_004
+
+# Unknown account
+balance acc_999
+
+# Missing args
+balance
+
+
+# ─────────────────────────────────────────
+# STATEMENT
+# ─────────────────────────────────────────
+
+# Happy path - account with multiple transactions
+statement acc_001
+statement acc_002
+
+# Account with no transactions beyond initial deposit
+create_account bank_01 acc_006 savings 1000
+statement acc_006
+
+# Unknown account
+statement acc_999
+
+# Missing args
+statement
+
+
+# ─────────────────────────────────────────
+# CLOSE ACCOUNT
+# ─────────────────────────────────────────
+
+# Happy path
+close_account acc_006
+
+# Already closed
+close_account acc_006
+
+# Unknown account
+close_account acc_999
+
+# Operations on closed account
+deposit acc_006 500
+withdraw acc_006 200
+transfer acc_006 acc_001 100
+transfer acc_001 acc_006 100
+balance acc_006
+statement acc_006
+
+# Missing args
+close_account
+
+
+# ─────────────────────────────────────────
+# UNKNOWN COMMAND
+# ─────────────────────────────────────────
+
+foo acc_001 500
+borrow acc_001 200
+
+
+# ─────────────────────────────────────────
+# FINAL STATE CHECK
+# ─────────────────────────────────────────
+
+balance acc_001
+balance acc_002
+balance acc_003
+balance acc_004
+
+statement acc_001
+statement acc_002
+statement acc_003
+statement acc_004
+
+exit

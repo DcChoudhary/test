@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
+require_relative 'bank'
 
 ##
 # This class is main entry point of the system
@@ -8,10 +9,10 @@ require 'singleton'
 class BankingSystem
   include Singleton
 
-  class AccountCloseError < StandardError; end
-  class BankAlreadyExistError < StandardError; end
-  class BankNotFoundError < StandardError; end
-  class AccountNotFoundError < StandardEror; end
+  class AccountCloseError < ApplicationError; end
+  class BankAlreadyExistError < ApplicationError; end
+  class BankNotFoundError < ApplicationError; end
+  class AccountNotFoundError < ApplicationError; end
 
   def initialize
     @banks = {}
@@ -19,7 +20,8 @@ class BankingSystem
   end
 
   def create_bank(id)
-    rasie BankAlreadyExistError, "Bank with id #{id} is already present, please choose different id" if @banks[id]
+    raise BankAlreadyExistError, "Bank with id #{id} is already present, please choose different id" if @banks[id]
+
     @banks[id] = Bank.new(id)
     puts "Bank with #{id} created succefully"
   end

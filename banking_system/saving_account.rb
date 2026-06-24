@@ -4,6 +4,8 @@
 # This class is sub class of the account class and hold the logic related to the saving account only
 #
 class SavingAccount < Account
+  class MinimumBalanceError < ApplicationError; end
+
   MINIMUM_BALANCE = 500
 
   def initialize(id, balance)

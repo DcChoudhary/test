@@ -6,7 +6,7 @@
 class CurrentAccount < Account
   DAILY_WITHDRAW_LIMIT = 50_000
 
-  class DailyWithdrawLimitError < StandardError; end
+  class DailyWithdrawLimitError < ApplicationError; end
 
   def initialize(id, balance)
     super(id, balance, :current)

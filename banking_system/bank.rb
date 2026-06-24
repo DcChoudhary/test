@@ -6,8 +6,8 @@
 class Bank
   attr_reader :id, :accounts
 
-  class AccountAlreadyExistError < StandardError; end
-  class InvalidAccountTypeError < StandardError; end
+  class AccountAlreadyExistError < ApplicationError; end
+  class InvalidAccountTypeError < ApplicationError; end
 
   def initialize(id)
     @id = id
