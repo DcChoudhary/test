@@ -24,8 +24,6 @@ class Bank
     @accounts[account_id] = klass.new(account_id, balance)
   end
 
-  private
-
   def find_account(account_id)
     accounts[account_id]
   end

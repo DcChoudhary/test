@@ -10,6 +10,7 @@ class BankingSystem
 
   def initialize
     @banks = {}
+    @accounts = {}
   end
 
   def create_bank(id)
@@ -18,12 +19,18 @@ class BankingSystem
     puts "Bank with #{id} created succefully"
   end
 
-  # create_account <bank_id> <account_id> <account_type> <initial_balance>
-
   def create_account(bank_id, account_id, account_type, balance)
     bank = @banks[bank_id]
     raise BankNotFoundError, "Bank with id #{bank_id} not found" unless bank
 
-    bank.create_account(account_id, account_type, balance)
+    account = bank.create_account(account_id, account_type, balance)
+    @accounts[account.id] = account
+  end
+
+  # deposit <account_id> <amount>
+  def deposit(account_id, amount)
+    account = @accounts[account_id]
+    rise AccountNotFoundError, "Account not found with id #{account_id}" unless account
+    account.deposit(amount)
   end
 end
