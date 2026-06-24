@@ -8,6 +8,11 @@ require 'singleton'
 class BankingSystem
   include Singleton
 
+  class AccountCloseError < StandardError; end
+  class BankAlreadyExistError < StandardError; end
+  class BankNotFoundError < StandardError; end
+  class AccountNotFoundError < StandardEror; end
+
   def initialize
     @banks = {}
     @accounts = {}
@@ -55,6 +60,10 @@ class BankingSystem
     end
   end
 
+  def close_account(account_id)
+    find_account(account_id).close_account
+  end
+
   private
 
   def same_bank(from_account, to_account)
@@ -65,6 +74,7 @@ class BankingSystem
 
   def find_account(account_id)
     account = @accounts[account_id]
-    rise AccountNotFoundError, "Account not found with id #{account_id}" unless account
+    raise AccountCloseError, 'Account is closed' if account.closed
+    raise AccountNotFoundError, "Account not found with id #{account_id}" unless account
   end
 end

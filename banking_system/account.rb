@@ -64,6 +64,11 @@ class Account
     puts "Amount #{amount} is credited, current balance is #{balance}"
   end
 
+  def close_account
+    @closed = true
+    puts "Account #{id} is succefully closed"
+  end
+
   private
 
   def create_transaction(amount, type, transfere_to = nil)
