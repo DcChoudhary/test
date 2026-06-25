@@ -28,7 +28,9 @@ class Bank
     klass = ACCOUNT_TYPES[type.to_sym]
     raise InvalidAccountTypeError, 'Invalid account type' unless klass
 
-    @accounts[account_id] = klass.new(account_id, balance)
+    account = klass.new(account_id, balance)
+    account.create_transaction(balance, Transaction::TYPES[:deposit], nil, nil, nil)
+    @accounts[account_id] = account
   end
 
   def find_account(account_id)

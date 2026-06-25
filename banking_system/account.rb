@@ -70,13 +70,13 @@ class Account
     puts "Account #{id} is successfully closed"
   end
 
-  private
-
   def create_transaction(amount, type, transfer_to = nil, transfer_from = nil, parent_reference_id = nil)
     transaction = Transaction.new(amount, type, transfer_to, transfer_from, parent_reference_id)
     @transactions << transaction
     transaction
   end
+
+  private
 
   def extra_fee(amount)
     amount * (CROSS_BANK_TRANSACTION_FEE_PERCENTAGE / 100.0)
