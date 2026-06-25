@@ -32,6 +32,7 @@ class BankingSystem
 
     account = bank.create_account(account_id, account_type, balance.to_f)
     @accounts[account.id] = account
+    puts "Account #{account.id} created successfully in bank #{bank.id}"
   end
 
   # deposit <account_id> <amount>

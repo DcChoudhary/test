@@ -67,7 +67,7 @@ class Account
 
   def close_account
     @closed = true
-    puts "Account #{id} is succefully closed"
+    puts "Account #{id} is successfully closed"
   end
 
   private
@@ -83,7 +83,7 @@ class Account
   end
 
   def balance_check(amount)
-    raise InsufficientBalanceError, 'Insufficient balance' if remianing_balance(amount).negative?
+    raise InsufficientBalanceError, 'Insufficient balance' if remaining_balance(amount).negative?
   end
 
   def amount_check(amount)
@@ -94,6 +94,6 @@ class Account
     return unless balance < INITIAL_BALANCE
 
     raise InitialBalanceError,
-          "Account will open with the minimum initial blance #{INITIAL_BALANCE}"
+          "Account will open with the minimum initial balance #{INITIAL_BALANCE}"
   end
 end
