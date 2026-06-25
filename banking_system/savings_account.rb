@@ -19,6 +19,11 @@ class SavingsAccount < Account
     super(amount)
   end
 
+  def transfer_debit(amount, same_bank)
+    minimum_balance_check(amount)
+    super(amount, same_bank)
+  end
+
   private
 
   def minimum_balance_check(amount)

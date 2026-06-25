@@ -10,8 +10,7 @@ require_relative 'banking_system'
 class CommandProcessor
   class InvalidCommand < ApplicationError; end
 
-  ALLOWED_COMMAND = %w[create_bank create_account deposit withdraw transfer balance statement close_account
-                       statement].freeze
+  ALLOWED_COMMAND = %w[create_bank create_account deposit withdraw transfer balance statement close_account].freeze
 
   def initialize
     @bank_sys = BankingSystem.instance
@@ -56,7 +55,7 @@ class CommandProcessor
     @bank_sys.statement(*args)
   end
 
-  def close(args)
-    @bank_sys.close(*args)
+  def close_account(args)
+    @bank_sys.close_account(*args)
   end
 end

@@ -13,7 +13,6 @@ class Account
   class NegativeAmountError < ApplicationError; end
 
   INITIAL_BALANCE = 500
-  CROSS_BANK_TRANSACTION_FEE_PERCENTAGE = 20
 
   def initialize(id, balance, type)
     initial_balance_check(balance)
@@ -40,23 +39,12 @@ class Account
     puts "Amount #{amount} is successfully withdraw, current balance is #{balance}"
   end
 
-  def remaining_balance(amount)
-    balance - amount
-  end
-
-  def transfer_debit(amount, same_bank)
+  def transfer_debit(amount)
     amount_check(amount)
-    actual_amount = amount
-    amount += extra_fee(actual_amount) unless same_bank
-    unless same_bank
-      puts "Cross bank detected, you will be charged #{CROSS_BANK_TRANSACTION_FEE_PERCENTAGE} % extra of transfer amount"
-    end
     balance_check(amount)
 
     @balance -= amount
     puts "Amount #{amount} is debited from account #{id}"
-    transaction = create_transaction(actual_amount, Transaction::TYPES[:transfer], self)
-    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfer_service_fee], nil, transaction.id, nil)
   end
 
   def transfer_credit(amount)
@@ -78,8 +66,8 @@ class Account
 
   private
 
-  def extra_fee(amount)
-    amount * (CROSS_BANK_TRANSACTION_FEE_PERCENTAGE / 100.0)
+  def remaining_balance(amount)
+    balance - amount
   end
 
   def balance_check(amount)

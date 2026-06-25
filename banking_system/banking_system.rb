@@ -15,6 +15,8 @@ class BankingSystem
   class AccountNotFoundError < ApplicationError; end
   class TransferNotAllowed < ApplicationError; end
 
+  CROSS_BANK_TRANSACTION_FEE_PERCENTAGE = 2
+
   def initialize
     @banks = {}
     @accounts = {}
@@ -31,18 +33,18 @@ class BankingSystem
     bank = @banks[bank_id]
     raise BankNotFoundError, "Bank with id #{bank_id} not found" unless bank
 
-    account = bank.create_account(account_id, account_type, balance.to_f)
+    account = bank.create_account(account_id, account_type, balance)
     @accounts[account.id] = account
     puts "Account #{account.id} created successfully in bank #{bank.id}"
   end
 
   # deposit <account_id> <amount>
   def deposit(account_id, amount)
-    find_account(account_id).deposit(amount.to_f)
+    find_account(account_id).deposit(amount)
   end
 
   def withdraw(account_id, amount)
-    find_account(account_id).withdraw(amount.to_f)
+    find_account(account_id).withdraw(amount)
   end
 
   def transfer(from_account_id, to_account_id, amount)
@@ -50,8 +52,17 @@ class BankingSystem
     to_account = find_account(to_account_id)
     raise TransferNotAllowed, 'Transfer to same account not allowed' if from_account == to_account
 
-    from_account.transfer_debit(amount.to_f, same_bank(from_account, to_account))
-    to_account.transfer_credit(amount.to_f)
+    fee = same_bank?(from_account, to_account) ? 0 : calculate_fee(amount)
+    debit_amount = amount + fee
+    if fee.positive?
+      puts "Cross bank detected, you will be charged #{CROSS_BANK_TRANSACTION_FEE_PERCENTAGE} % extra of transfer amount"
+    end
+
+    from_account.transfer_debit(amount + fee)
+    to_account.transfer_credit(amount)
+
+    transaction = create_transaction(debit_amount, Transaction::TYPES[:transfer], nil, self)
+    create_transaction(fee, Transaction::TYPES[:transfer_service_fee], nil, transaction.id, nil)
   end
 
   def balance(account_id)
@@ -75,8 +86,8 @@ class BankingSystem
     @banks.each_value do |bank|
       accounts = bank.accounts
 
-      return true if accounts.find { |id, _| id == from_account.id } &&
-                     accounts.find { |id, _| id == to_account.id }
+      return true if accounts.key?(from_account.id) &&
+                     accounts.key?(to_account.id)
     end
     false
   end
@@ -87,5 +98,9 @@ class BankingSystem
     raise AccountCloseError, 'Account is closed' if account.closed
 
     account
+  end
+
+  def calculate_fee(amount)
+    amount * (CROSS_BANK_TRANSACTION_FEE_PERCENTAGE / 100.0)
   end
 end

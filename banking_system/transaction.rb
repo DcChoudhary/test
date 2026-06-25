@@ -13,10 +13,8 @@ class Transaction
     transfer_service_fee: 'transfer service fee'
   }.freeze
 
-  @@next_id = 0
-
   def initialize(amount, type, transferred_to = nil, transferred_from = nil, parent_reference_id = nil)
-    @id = generate_id
+    @id = SecureRandom.uuid
     @parent_reference_id = parent_reference_id
     @amount = amount
     @type = type
@@ -47,10 +45,5 @@ class Transaction
     else
       "Amount #{amount} is transferred to #{transferred_to.id} account at #{created_at}"
     end
-  end
-
-  def generate_id
-    @@next_id += 1
-    format('TXN-%06d', @@next_id)
   end
 end

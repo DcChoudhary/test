@@ -12,7 +12,6 @@ class CurrentAccount < Account
 
   def initialize(id, balance)
     super(id, balance, :current)
-    @logger = Logger.new($stdout)
   end
 
   def withdraw(amount)
@@ -36,16 +35,14 @@ class CurrentAccount < Account
   end
 
   def today_withdraw_amount
-    @today_withdraw_amount = @transactions.select do |tran|
+    @transactions.select do |tran|
       tran.type == Transaction::TYPES[:withdraw] && tran.created_at >= begin_of_today && tran.created_at <= end_of_today
-    end
-
-    @today_withdraw_amount.sum(&:amount)
+    end.sum(&:amount)
   end
 
   def begin_of_today
     now = Time.now
-    Time.new(now.year, now.month, now.day, 0o0, 0o0, 0o0)
+    Time.new(now.year, now.month, now.day, 0, 0, 0)
   end
 
   def end_of_today
