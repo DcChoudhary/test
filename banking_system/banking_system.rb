@@ -23,7 +23,7 @@ class BankingSystem
     raise BankAlreadyExistError, "Bank with id #{id} is already present, please choose different id" if @banks[id]
 
     @banks[id] = Bank.new(id)
-    puts "Bank with #{id} created succefully"
+    puts "Bank with #{id} created successfully"
   end
 
   def create_account(bank_id, account_id, account_type, balance)
@@ -76,7 +76,9 @@ class BankingSystem
 
   def find_account(account_id)
     account = @accounts[account_id]
-    raise AccountCloseError, 'Account is closed' if account.closed
     raise AccountNotFoundError, "Account not found with id #{account_id}" unless account
+    raise AccountCloseError, 'Account is closed' if account.closed
+
+    account
   end
 end

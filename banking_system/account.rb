@@ -6,10 +6,11 @@ require_relative 'transaction'
 # This class holds the account details
 #
 class Account
-  attr_reader :id, :type, :balance, :closed
+  attr_reader :id, :type, :balance, :closed, :transactions
 
   class InitialBalanceError < ApplicationError; end
   class InsufficientBalanceError < ApplicationError; end
+  class NegativeAmountError < ApplicationError; end
 
   INITIAL_BALANCE = 500
   CROSS_BANK_TRANSACTION_FEE_PERCENTAGE = 20
@@ -20,28 +21,31 @@ class Account
     @balance = balance
     @type = type
     @closed = false
-    @transaction = []
+    @transactions = []
   end
 
   def deposit(amount)
+    amount_check(amount)
     @balance += amount
     create_transaction(amount, Transaction::TYPES[:deposit])
-    puts "Amount #{amount} is succefully deposit, current balance is #{balance}"
+    puts "Amount #{amount} is successfully deposit, current balance is #{balance}"
   end
 
   def withdraw(amount)
+    amount_check(amount)
     balance_check(amount)
 
     @balance -= amount
     create_transaction(amount, Transaction::TYPES[:withdraw])
-    puts "Amount #{amount} is succefully withdraw, current balance is #{balance}"
+    puts "Amount #{amount} is successfully withdraw, current balance is #{balance}"
   end
 
-  def remianing_balance(amount)
+  def remaining_balance(amount)
     balance - amount
   end
 
   def transfer_debit(amount, same_bank)
+    amount_check(amount)
     actual_amount = amount
     amount += extra_fee(actual_amount) unless same_bank
     unless same_bank
@@ -70,7 +74,7 @@ class Account
 
   def create_transaction(amount, type, transfer_to = nil)
     transaction = Transaction.new(amount, type, transfer_to)
-    @transaction << transaction
+    @transactions << transaction
     transaction
   end
 
@@ -78,8 +82,12 @@ class Account
     amount * (CROSS_BANK_TRANSACTION_FEE_PERCENTAGE / 100.0)
   end
 
-  def blanace_check(amount)
-    raise InsufficientBalanceError, 'Insufficient balance' if remianing_balance(amount).negavite?
+  def balance_check(amount)
+    raise InsufficientBalanceError, 'Insufficient balance' if remianing_balance(amount).negative?
+  end
+
+  def amount_check(amount)
+    raise NegativeAmountError, 'Amount should be grater than 0' if amount <= 0
   end
 
   def initial_balance_check(balance)

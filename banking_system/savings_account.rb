@@ -22,7 +22,7 @@ class SavingsAccount < Account
   private
 
   def minimum_balance_check(amount)
-    return if remianing_balance(amount) >= MINIMUM_BALANCE
+    return if remaining_balance(amount) >= MINIMUM_BALANCE
 
     raise MinimumBalanceError,
           "After the current transaction the balance go low then the minimum balance limit of #{MINIMUM_BALANCE},

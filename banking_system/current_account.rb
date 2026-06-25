@@ -27,15 +27,15 @@ class CurrentAccount < Account
             "You have reached you daily limit of #{DAILY_WITHDRAW_LIMIT}"
     end
 
-    raise DailyWithdrawLimitError, "You can only withdraw #{daily_remeaning_limit}" if daily_remeaning_limit < amount
+    raise DailyWithdrawLimitError, "You can only withdraw #{daily_remaining_limit}" if daily_remaining_limit < amount
   end
 
-  def daily_remeaning_limit
+  def daily_remaining_limit
     DAILY_WITHDRAW_LIMIT - today_withdraw_amount
   end
 
   def today_withdraw_amount
-    @today_withdraw_amount ||= transactions.select do |tran|
+    @today_withdraw_amount ||= @transactions.select do |tran|
       tran.created_at <= end_of_today && tran.created_at <= begin_of_today
     end.sum(&:amount)
   end

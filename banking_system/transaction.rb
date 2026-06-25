@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# This class hold all the transaction for the acount
+# This class hold all the transaction for the account
 #
 class Transaction
   attr_reader :id, :amount, :type, :transferred_to, :created_at, :transferred_from
@@ -51,6 +51,6 @@ class Transaction
 
   def generate_id
     @@next_id += 1
-    format('TXN-%06d', @next_id)
+    format('TXN-%06d', @@next_id)
   end
 end
