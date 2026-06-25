@@ -4,7 +4,7 @@
 # This class hold all the transaction for the account
 #
 class Transaction
-  attr_reader :id, :amount, :type, :transferred_to, :created_at, :transferred_from
+  attr_reader :id, :amount, :type, :transferred_to, :created_at, :transferred_from, :parent_reference_id
 
   TYPES = {
     deposit: 'deposit',
@@ -42,10 +42,10 @@ class Transaction
   private
 
   def transfer_message
-    if transferred_to.present?
-      "Amount #{amount} is transferred to #{transferred_to.id} account at #{created_at}"
-    else
+    if transferred_to.nil?
       "Amount #{amount} is transferred from #{transferred_from.id} account at #{created_at}"
+    else
+      "Amount #{amount} is transferred to #{transferred_to.id} account at #{created_at}"
     end
   end
 

@@ -13,6 +13,7 @@ class BankingSystem
   class BankAlreadyExistError < ApplicationError; end
   class BankNotFoundError < ApplicationError; end
   class AccountNotFoundError < ApplicationError; end
+  class TransferNotAllowed < ApplicationError; end
 
   def initialize
     @banks = {}
@@ -47,8 +48,9 @@ class BankingSystem
   def transfer(from_account_id, to_account_id, amount)
     from_account = find_account(from_account_id)
     to_account = find_account(to_account_id)
+    raise TransferNotAllowed, 'Transfer to same account not allowed' if from_account == to_account
 
-    from_account.transfer_debit(amount.to_f, same_bank)
+    from_account.transfer_debit(amount.to_f, same_bank(from_account, to_account))
     to_account.transfer_credit(amount.to_f)
   end
 
@@ -70,9 +72,13 @@ class BankingSystem
   private
 
   def same_bank(from_account, to_account)
-    @banks.select do |_, bank|
-      [from_account, to_account].include?(bank.account)
-    end.size == 1
+    @banks.each_value do |bank|
+      accounts = bank.accounts
+
+      return true if accounts.find { |id, _| id == from_account.id } &&
+                     accounts.find { |id, _| id == to_account.id }
+    end
+    false
   end
 
   def find_account(account_id)

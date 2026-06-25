@@ -56,12 +56,12 @@ class Account
     @balance -= amount
     puts "Amount #{amount} is debited from account #{id}"
     transaction = create_transaction(actual_amount, Transaction::TYPES[:transfer], self)
-    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfer_service_fee], nil, transaction.id)
+    create_transaction(extra_fee(actual_amount), Transaction::TYPES[:transfer_service_fee], nil, transaction.id, nil)
   end
 
   def transfer_credit(amount)
     @balance += amount
-    create_transaction(amount, Transaction::TYPES[:transfer], nil, self)
+    create_transaction(amount, Transaction::TYPES[:transfer], nil, self, nil)
     puts "Amount #{amount} is credited, current balance is #{balance}"
   end
 
@@ -72,8 +72,8 @@ class Account
 
   private
 
-  def create_transaction(amount, type, transfer_to = nil)
-    transaction = Transaction.new(amount, type, transfer_to)
+  def create_transaction(amount, type, transfer_to = nil, transfer_from = nil, parent_reference_id = nil)
+    transaction = Transaction.new(amount, type, transfer_to, transfer_from, parent_reference_id)
     @transactions << transaction
     transaction
   end
