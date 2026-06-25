@@ -1,0 +1,20 @@
+- Difference Engine or gem 
+- Which gem and engine you have used
+- what is callbacks/transactional callbacks
+- what is difference between String and symbol, how it implemented internally
+- preload, includes, eager_load, joins
+- strong parameters
+- which security issue prevent by strong parameters
+- How migration tracks internally, or works internally
+- How to prevent sql injections
+- What is active record, and what is the benefit of using it.
+
+- Is the below code right?
+class User
+
+before_save :update_user
+def update_user
+    self.update(....)
+end
+end
+
