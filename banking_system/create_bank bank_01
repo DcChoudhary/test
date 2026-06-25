@@ -1,0 +1,26 @@
+create_bank bank_01
+create_bank bank_02
+create_account bank_01 acc_001 savings 1000
+create_account bank_01 acc_002 current 5000
+create_account bank_02 acc_003 savings 2000
+create_account bank_02 acc_004 current 10000
+deposit acc_001 500
+deposit acc_002 1000
+deposit acc_003 200
+deposit acc_004 5000
+withdraw acc_001 200
+withdraw acc_002 1000
+withdraw acc_003 100
+withdraw acc_004 5000
+transfer acc_001 acc_002 200
+transfer acc_001 acc_003 500
+transfer acc_002 acc_004 1000
+
+
+balance acc_001
+balance acc_002
+balance acc_003
+balance acc_004
+
+statement acc_001
+statement acc_002

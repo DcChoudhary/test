@@ -1,30 +1,37 @@
 # frozen_string_literal: true
 
+require_relative 'savings_account'
+require_relative 'current_account'
+
 ##
 # This class hold the properties of bank
 #
 class Bank
   attr_reader :id, :accounts
 
-  class AccountAlreadyExistError < StandardError; end
-  class InvalidAccountTypeError < StandardError; end
+  class AccountAlreadyExistError < ApplicationError; end
+  class InvalidAccountTypeError < ApplicationError; end
+
+  ACCOUNT_TYPES = {
+    savings: SavingsAccount,
+    current: CurrentAccount
+  }.freeze
 
   def initialize(id)
     @id = id
     @accounts = {}
-    @account_types = { saving: SavingAccount, current: CurrentAccount }
   end
 
   def create_account(account_id, type, balance)
     raise AccountAlreadyExistError, "Account with #{account_id} already exist" if find_account(account_id)
 
-    klass = @account_types[type.to_sym].call
+    klass = ACCOUNT_TYPES[type.to_sym]
     raise InvalidAccountTypeError, 'Invalid account type' unless klass
 
-    @accounts[account_id] = klass.new(account_id, balance)
+    account = klass.new(account_id, balance)
+    account.create_transaction(balance, Transaction::TYPES[:deposit], nil, nil, nil)
+    @accounts[account_id] = account
   end
-
-  private
 
   def find_account(account_id)
     accounts[account_id]
