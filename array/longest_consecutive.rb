@@ -108,7 +108,7 @@ longest_consecutive_sort(arr)
 # Optimal approach either use the hash or set, 
 # which will remove the duplicate numbers from the array, 
 # then find the starting point of the sequence and find the grater number by
-# current + 1 if present update the longest if the longest is less then the length
+# current + 1 if present update the longest when longest is less then the length
 
 # Time complexity: O(n)
 # Space: O(n)
